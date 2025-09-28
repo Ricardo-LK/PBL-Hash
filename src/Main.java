@@ -44,6 +44,8 @@ public class Main {
 
                 // Para cada conjunto de dados
                 for (int k = 0; k < 3; k++) {
+                    // Precisa limpar a tabela hash antes!
+
                     int[] conjuntoDeDados = conjuntosDeDados[k];
 
                     // Utiliza a função hash atual para inserir na respectiva tabela hash
