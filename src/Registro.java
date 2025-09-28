@@ -31,9 +31,6 @@ public class Registro {
 
     @Override
     public String toString() {
-        return "Registro{" +
-                "proximo=" + proximo.getCodigo() +
-                ", codigo='" + codigo + '\'' +
-                '}';
+        return "Registro{" + "proximo=" + proximo.getCodigo() + ", codigo='" + codigo + '\'' + '}';
     }
 }

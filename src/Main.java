@@ -8,6 +8,15 @@ public class Main {
     private final static int UM_MILHAO = 1000000;
     private final static int DEZ_MILHOES = 10000000;
 
+    /**
+     * Podemos plotar as seguintes métricas:
+     * - Tempo de inserção x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função Hash
+     * - Tempo de busca x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função Hash
+     * - Número de colisões x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função hash
+     * - Lacunas x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função hash
+     * - Uso de memória x Tamanho da Tabela Hash x Tamanho de conjunto de dados x Função Hash
+     */
+
     public static void main(String[] args) {
         Random rand = new Random(2025);
 
@@ -45,6 +54,7 @@ public class Main {
                 // Para cada conjunto de dados
                 for (int k = 0; k < 3; k++) {
                     // Precisa limpar a tabela hash antes!
+                    for (int n = 0; n < tamanhosTabelasHash[j]; n++) tabelaHash[n] = null;
 
                     int[] conjuntoDeDados = conjuntosDeDados[k];
 

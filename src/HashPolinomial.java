@@ -1,7 +1,7 @@
 public class HashPolinomial extends Hash {
     @Override
     public void hash(Registro[] tabelaHash, int[] dados) {
-
+        // Se der colisão?
     }
 
     private long funcaoHash(String dado, long modulo) {
