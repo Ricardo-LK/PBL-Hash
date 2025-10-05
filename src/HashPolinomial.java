@@ -1,7 +1,10 @@
 public class HashPolinomial extends Hash {
     @Override
-    public void hash(Registro[] tabelaHash, int[] dados) {
+    public EstatisticaHash hash(Registro[] tabelaHash, int tamanhoTabelaHash, int[] dados, int tamanhoConjuntoDados) {
         // Se der colisão?
+        System.out.println("Hash polinomial não implementado.");
+
+        return null;
     }
 
     private long funcaoHash(String dado, long modulo) {
