@@ -23,7 +23,7 @@ public class Main {
         Random rand = new Random(2025);
 
         // Funções Hash
-        Hash[] modulosHash = {new HashRehashing(), new HashEncadeamento(), new HashPolinomial()};
+        Hash[] modulosHash = {new HashRehashing(), new HashEncadeamento(), new HashDuplo()};
 
         // Tamanhos das tabelas hash e dos conjuntos de dados
         int[] tamanhosTabelasHash = {UM_MIL, DEZ_MIL, CEM_MIL};
@@ -37,18 +37,20 @@ public class Main {
 
         // Popula cada array de dados
         for (int i = 0; i < CEM_MIL; i++)
-            conjuntoCemMilDados[i] = rand.nextInt(1, 999999999);
+            conjuntoCemMilDados[i] = rand.nextInt(1, 2_147_483_647);
 
         for (int i = 0; i < UM_MILHAO; i++)
-            conjuntoUmMilhaoDados[i] = rand.nextInt(1, 999999999);
+            conjuntoUmMilhaoDados[i] = rand.nextInt(1, 2_147_483_647);
 
         for (int i = 0; i < DEZ_MILHOES; i++)
-            conjuntoDezMilhoesDados[i] = rand.nextInt(1, 999999999);
+            conjuntoDezMilhoesDados[i] = rand.nextInt(1, 2_147_483_647);
 
 
         for (int i = 0; i < 3; i++) {
             // Escolhe a função de Hash
             Hash moduloHash = modulosHash[i];
+
+            if (moduloHash.getClass() != HashDuplo.class) continue;
 
             System.out.println("=========== FUNÇÃO HASH " + moduloHash.getClass().getName() + " ===========");
 

@@ -15,7 +15,7 @@ public class HashEncadeamento extends Hash {
             } else {
                 Registro novoRegistro = new Registro(dado);
                 novoRegistro.setProximo(tabelaHash[hash]);
-                tabelaHash[hash] =  novoRegistro;
+                tabelaHash[hash] = novoRegistro;
 
                 estatisticaHash.elementosInseridos++;
                 estatisticaHash.colisoes++;
@@ -31,7 +31,6 @@ public class HashEncadeamento extends Hash {
 
     public int funcaoHash(int dado, int modulo) {
         int h = (dado ^ (dado >>> 16)) % modulo;
-        if (h < 0) return -h;
-        else return h;
+        return h < 0 ? -h % modulo : h;
     }
 }

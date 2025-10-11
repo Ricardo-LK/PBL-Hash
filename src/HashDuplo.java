@@ -1,4 +1,4 @@
-public class HashRehashing extends Hash {
+public class HashDuplo extends Hash {
     @Override
     public EstatisticaHash hash(Registro[] tabelaHash, int tamanhoTabelaHash, int[] dados, int tamanhoConjuntoDados) {
         EstatisticaHash estatisticaHash = new EstatisticaHash();
@@ -6,19 +6,27 @@ public class HashRehashing extends Hash {
 
         for (int i = 0; i < tamanhoConjuntoDados; i++) {
             int dado = dados[i];
-            int hash = funcaoHash(dado, tamanhoTabelaHash);
+
+            int hash1 = funcaoHash1(dado, tamanhoTabelaHash);
+
+            // Hash2 sempre ímpar para garantir coprimidade com potências de 2
+            int hash2 = 1 + ((dado & 0x7FFFFFFF) % (tamanhoTabelaHash - 1));
+            if (hash2 % 2 == 0) hash2++; // Garante ímpar
+
+            int hash = hash1;
+            int tentativa = 0;
 
             while (tabelaHash[hash] != null) {
-                // Se o contador for igual o tamanho da tabela hash, então a tabela está cheia.
                 if (estatisticaHash.elementosInseridos >= tamanhoTabelaHash) {
                     // Não há mais espaço na tabela hash.
                     estatisticaHash.fimInsercao = System.nanoTime();
                     estatisticaHash.duracaoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
                     return estatisticaHash;
                 } else {
-                    // Colisão
                     estatisticaHash.colisoes++;
-                    hash = funcaoRehash(hash, estatisticaHash.colisoes, tamanhoTabelaHash);
+                    tentativa++;
+                    hash = (hash1 + tentativa * hash2) % tamanhoTabelaHash;
+                    if (hash < 0) hash += tamanhoTabelaHash;
                 }
             }
 
@@ -34,13 +42,8 @@ public class HashRehashing extends Hash {
         return estatisticaHash;
     }
 
-    public int funcaoHash(int dado, int modulo) {
+    public int funcaoHash1(int dado, int modulo) {
         int h = (dado ^ (dado >>> 16)) % modulo;
         return h < 0 ? -h % modulo : h;
-    }
-
-    public int funcaoRehash(int hash, int colisoes, int modulo) {
-        int r = (hash + colisoes * colisoes) % modulo;
-        return r < 0 ? -r % modulo : r;
     }
 }
