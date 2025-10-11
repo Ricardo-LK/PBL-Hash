@@ -37,13 +37,13 @@ public class Main {
 
         // Popula cada array de dados
         for (int i = 0; i < CEM_MIL; i++)
-            conjuntoCemMilDados[i] = rand.nextInt(0, 999999999);
+            conjuntoCemMilDados[i] = rand.nextInt(1, 999999999);
 
         for (int i = 0; i < UM_MILHAO; i++)
-            conjuntoUmMilhaoDados[i] = rand.nextInt(0, 999999999);
+            conjuntoUmMilhaoDados[i] = rand.nextInt(1, 999999999);
 
         for (int i = 0; i < DEZ_MILHOES; i++)
-            conjuntoDezMilhoesDados[i] = rand.nextInt(0, 999999999);
+            conjuntoDezMilhoesDados[i] = rand.nextInt(1, 999999999);
 
 
         for (int i = 0; i < 3; i++) {
@@ -75,6 +75,7 @@ public class Main {
                     if (estatisticaHash != null) {
                         System.out.println("\t\tElementos Inseridos: " + estatisticaHash.elementosInseridos);
                         System.out.println("\t\tColisões: " + estatisticaHash.colisoes);
+                        System.out.println("\t\tTempo de inserção total: " + (estatisticaHash.duracaoInsercao / 1000000) + "ms");
                     }
 
                     System.out.println();

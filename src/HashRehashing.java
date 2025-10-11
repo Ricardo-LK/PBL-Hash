@@ -2,27 +2,31 @@ public class HashRehashing extends Hash {
     @Override
     public EstatisticaHash hash(Registro[] tabelaHash, int tamanhoTabelaHash, int[] dados, int tamanhoConjuntoDados) {
         EstatisticaHash estatisticaHash = new EstatisticaHash();
+        estatisticaHash.comecoInsercao = System.nanoTime();
 
         for (int i = 0; i < tamanhoConjuntoDados; i++) {
             int dado = dados[i];
             int hash = funcaoHash(dado, tamanhoTabelaHash);
 
-            while (tabelaHash[hash] != null) {
+            boolean parar = false;
+            while (tabelaHash[hash] != null && !parar) {
                 // Se o contador for igual o tamanho da tabela hash, então a tabela está cheia.
                 if (estatisticaHash.elementosInseridos >= tamanhoTabelaHash) {
                     // Não há mais espaço na tabela hash.
-                    return estatisticaHash;
+                    parar = true;
+                } else {
+                    // Colisão
+                    estatisticaHash.colisoes++;
+                    hash = funcaoRehash(hash, estatisticaHash.colisoes, tamanhoTabelaHash);
                 }
-
-                // Colisão
-                estatisticaHash.colisoes++;
-                hash = funcaoRehash(hash, estatisticaHash.colisoes, tamanhoTabelaHash);
             }
 
             tabelaHash[hash] = new Registro(dado);
             estatisticaHash.elementosInseridos++;
         }
 
+        estatisticaHash.fimInsercao = System.nanoTime();
+        estatisticaHash.duracaoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
         return estatisticaHash;
     }
 
