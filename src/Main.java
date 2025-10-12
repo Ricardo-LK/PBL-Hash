@@ -1,3 +1,8 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 
 public class Main {
@@ -39,9 +44,10 @@ public class Main {
         for (int i = 0; i < 3; i++) {
             int tamanhoTabelaHash = tamanhosTabelasHash[i];
             Registro[] tabelaHash = new Registro[tamanhoTabelaHash];
-            String tempoPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,tempo\n";
+            String tempoInsercaoPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,tempoInsercao\n";
+            String tempoBuscaPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,tempoBusca\n";
             String colisoesPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,colisoes\n";
-            String comparacoesPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,comparacoes\n";
+            String maiorGapPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,maiorGap\n";
 
             System.out.println("=========== TABELA HASH DE " + tamanhoTabelaHash + " ELEMENTOS ===========");
 
@@ -59,28 +65,67 @@ public class Main {
                     int[] conjuntoDeDados = conjuntosDeDados[k];
                     int tamanhoConjuntoDeDados = tamanhosConjuntosDados[k];
 
-                    System.out.println("\t\tINSERINDO " + tamanhoConjuntoDeDados + " ELEMENTOS...");
+                    System.out.println("\t\tTESTANDO COM " + tamanhoConjuntoDeDados + " ELEMENTOS...");
 
                     // Utiliza a função hash atual para inserir na respectiva tabela hash
                     EstatisticaHash estatisticaHash = moduloHash.hash(tabelaHash, tamanhoTabelaHash, conjuntoDeDados, tamanhoConjuntoDeDados);
 
-                    tempoPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoInsercao + "\n";
+                    tempoInsercaoPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoInsercao + "\n";
+                    tempoBuscaPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoBusca + "\n";
                     colisoesPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.colisoes + "\n";
+                    maiorGapPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.maiorGap + "\n";
 
                     System.out.println("\t\tElementos Únicos Inseridos: " + estatisticaHash.elementosUnicosInseridos);
-                    if (moduloHash.getClass() == HashEncadeamento.class)
-                        System.out.println("\t\tComprimento da maior cadeia: " + estatisticaHash.comprimentoMaiorCadeia);
                     System.out.println("\t\tColisões: " + estatisticaHash.colisoes);
                     System.out.println("\t\tTempo de inserção total: " + estatisticaHash.tempoInsercao + "ns");
                     System.out.println("\t\tBuscas bem-sucedidas: " + estatisticaHash.buscasBemSucedidas);
                     System.out.println("\t\tBuscas mal-sucedidas: " + estatisticaHash.buscasMalSucedidas);
-                    System.out.println("\t\tTempo de busca total: " + estatisticaHash.tempoBusca + "ns\n");
+                    System.out.println("\t\tTempo de busca total: " + estatisticaHash.tempoBusca + "ns");
+                    System.out.println("\t\tQuantidade de gaps: " + estatisticaHash.qtdeGaps);
+                    System.out.println("\t\tMaior gap: " + estatisticaHash.maiorGap);
+                    System.out.println("\t\tMenor gap: " + estatisticaHash.menorGap);
+                    System.out.println("\t\tMedia gap: " + estatisticaHash.mediaGap);
+                    System.out.println();
                 }
             }
 
-            System.out.println(tempoPorConjuntoCSV);
-            System.out.println();
-            System.out.println(colisoesPorConjuntoCSV);
+            // Exportando os dados com BufferedWriter e FileWriter.
+            String diretorio = "plots/" + tamanhoTabelaHash + "/";
+
+            // Criando diretório se não existe
+            try {
+                Files.createDirectories(Path.of(diretorio));
+            } catch (IOException e) {
+                System.err.println("Falha ao criar diretório: " + e.getMessage());
+            }
+
+            // Tempo de Inserção
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(diretorio + "tempoInsercao.csv"))) {
+                writer.write(tempoInsercaoPorConjuntoCSV);
+            } catch (IOException e) {
+                System.err.println("Falha ao escrever arquivo de saída: " + e.getMessage());
+            }
+
+            // Tempo de Busca
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(diretorio + "tempoBusca.csv"))) {
+                writer.write(tempoBuscaPorConjuntoCSV);
+            } catch (IOException e) {
+                System.err.println("Falha ao escrever arquivo de saída: " + e.getMessage());
+            }
+
+            // Colisões
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(diretorio + "colisoes.csv"))) {
+                writer.write(colisoesPorConjuntoCSV);
+            } catch (IOException e) {
+                System.err.println("Falha ao escrever arquivo de saída: " + e.getMessage());
+            }
+
+            // Maior Gap
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(diretorio + "maiorGap.csv"))) {
+                writer.write(maiorGapPorConjuntoCSV);
+            } catch (IOException e) {
+                System.err.println("Falha ao escrever arquivo de saída: " + e.getMessage());
+            }
         }
     }
 }

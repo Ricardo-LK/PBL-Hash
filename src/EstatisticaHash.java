@@ -9,5 +9,8 @@ public class EstatisticaHash {
     public long tempoBusca;
     public long buscasBemSucedidas;
     public long buscasMalSucedidas;
-    public long comprimentoMaiorCadeia;
+    public long qtdeGaps;
+    public long menorGap;
+    public long maiorGap;
+    public double mediaGap;
 }
