@@ -16,9 +16,11 @@ Este projeto implementa e analisa o desempenho de diferentes abordagens de tabel
 │   ├── HashDuplo.java     # Implementação com hash duplo
 │   ├── HashEncadeamento.java # Implementação com encadeamento
 │   └── EstatisticaHash.java # Classe para coleta de estatísticas
-├── plots/                 # Scripts e resultados de análise
-│   ├── plot.py           # Script Python para geração de gráficos
-│   ├── requirements.txt  # Dependências do Python
+│
+├── plots/                # Scripts e resultados de análise
+│   ├── plots/ 
+│   │   ├── plot.py           # Script Python para geração de gráficos
+│   │   ├── requirements.txt  # Dependências do Python
 │   └── [tamanhos]/       # Diretórios com resultados para cada tamanho
 └── out/                  # Arquivos compilados
 ```
