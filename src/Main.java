@@ -2,22 +2,12 @@ import java.util.Random;
 
 public class Main {
 
+    private final static int CEM = 100;
     private final static int UM_MIL = 1000;
     private final static int DEZ_MIL = 10000;
     private final static int CEM_MIL = 100000;
     private final static int UM_MILHAO = 1000000;
     private final static int DEZ_MILHOES = 10000000;
-
-    /**
-     * Podemos plotar as seguintes métricas:
-     * <ul>
-     *      <li>Tempo de inserção x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função Hash</li>
-     *      <li>Tempo de busca x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função Hash</li>
-     *      <li>Número de colisões x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função hash</li>
-     *      <li>Lacunas x Tamanho da Tabela Hash x Tamanho do conjunto de dados x Função hash</li>
-     *      <li>Uso de memória x Tamanho da Tabela Hash x Tamanho de conjunto de dados x Função Hash</li>
-     * </ul>
-     */
 
     public static void main(String[] args) {
         Random rand = new Random(2025);
@@ -27,44 +17,44 @@ public class Main {
 
         // Tamanhos das tabelas hash e dos conjuntos de dados
         int[] tamanhosTabelasHash = {UM_MIL, DEZ_MIL, CEM_MIL};
-        int[] tamanhosConjuntosDados = {CEM_MIL, UM_MILHAO, DEZ_MILHOES};
+        int[] tamanhosConjuntosDados = {UM_MIL, DEZ_MIL, CEM_MIL};
 
         // Arrays com os dados a serem utilizados
-        int[] conjuntoCemMilDados = new int[CEM_MIL];
-        int[] conjuntoUmMilhaoDados = new int[UM_MILHAO];
-        int[] conjuntoDezMilhoesDados = new int[DEZ_MILHOES];
-        int[][] conjuntosDeDados = {conjuntoCemMilDados, conjuntoUmMilhaoDados, conjuntoDezMilhoesDados};
+        int[] conjuntoDeDados1 = new int[tamanhosConjuntosDados[0]];
+        int[] conjuntoDeDados2 = new int[tamanhosConjuntosDados[1]];
+        int[] conjuntoDeDados3 = new int[tamanhosConjuntosDados[2]];
+        int[][] conjuntosDeDados = {conjuntoDeDados1, conjuntoDeDados2, conjuntoDeDados3};
 
         // Popula cada array de dados
-        for (int i = 0; i < CEM_MIL; i++)
-            conjuntoCemMilDados[i] = rand.nextInt(1, 2_147_483_647);
+        for (int i = 0; i < tamanhosConjuntosDados[0]; i++)
+            conjuntoDeDados1[i] = rand.nextInt(1, 2_147_483_647);
 
-        for (int i = 0; i < UM_MILHAO; i++)
-            conjuntoUmMilhaoDados[i] = rand.nextInt(1, 2_147_483_647);
+        for (int i = 0; i < tamanhosConjuntosDados[1]; i++)
+            conjuntoDeDados2[i] = rand.nextInt(1, 2_147_483_647);
 
-        for (int i = 0; i < DEZ_MILHOES; i++)
-            conjuntoDezMilhoesDados[i] = rand.nextInt(1, 2_147_483_647);
+        for (int i = 0; i < tamanhosConjuntosDados[2]; i++)
+            conjuntoDeDados3[i] = rand.nextInt(1, 2_147_483_647);
 
-
+        // Para os 3 tamanhos de tabela hash
         for (int i = 0; i < 3; i++) {
+            int tamanhoTabelaHash = tamanhosTabelasHash[i];
+            Registro[] tabelaHash = new Registro[tamanhoTabelaHash];
+            String tempoPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,tempo\n";
+            String colisoesPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,colisoes\n";
+            String comparacoesPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,comparacoes\n";
+
+            System.out.println("=========== TABELA HASH DE " + tamanhoTabelaHash + " ELEMENTOS ===========");
+
             // Escolhe a função de Hash
-            Hash moduloHash = modulosHash[i];
-
-            if (moduloHash.getClass() != HashDuplo.class) continue;
-
-            System.out.println("=========== FUNÇÃO HASH " + moduloHash.getClass().getName() + " ===========");
-
-            // Para os 3 tamanhos de tabela hash
             for (int j = 0; j < 3; j++) {
-                int tamanhoTabelaHash = tamanhosTabelasHash[j];
-                Registro[] tabelaHash = new Registro[tamanhoTabelaHash];
+                Hash moduloHash = modulosHash[j];
 
-                System.out.println("\t---------- TABELA HASH DE " + tamanhoTabelaHash + " ELEMENTOS ----------");
+                System.out.println("\t---------- FUNÇÃO HASH " + moduloHash.getClass().getName() + " ----------");
 
                 // Para cada conjunto de dados
                 for (int k = 0; k < 3; k++) {
                     // Precisa limpar a tabela hash antes!
-                    for (int n = 0; n < tamanhosTabelasHash[j]; n++) tabelaHash[n] = null;
+                    for (int n = 0; n < tamanhoTabelaHash; n++) tabelaHash[n] = null;
 
                     int[] conjuntoDeDados = conjuntosDeDados[k];
                     int tamanhoConjuntoDeDados = tamanhosConjuntosDados[k];
@@ -74,15 +64,23 @@ public class Main {
                     // Utiliza a função hash atual para inserir na respectiva tabela hash
                     EstatisticaHash estatisticaHash = moduloHash.hash(tabelaHash, tamanhoTabelaHash, conjuntoDeDados, tamanhoConjuntoDeDados);
 
-                    if (estatisticaHash != null) {
-                        System.out.println("\t\tElementos Inseridos: " + estatisticaHash.elementosInseridos);
-                        System.out.println("\t\tColisões: " + estatisticaHash.colisoes);
-                        System.out.println("\t\tTempo de inserção total: " + (estatisticaHash.duracaoInsercao / 1000000) + "ms");
-                    }
+                    tempoPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoInsercao + "\n";
+                    colisoesPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.colisoes + "\n";
 
-                    System.out.println();
+                    System.out.println("\t\tElementos Únicos Inseridos: " + estatisticaHash.elementosUnicosInseridos);
+                    if (moduloHash.getClass() == HashEncadeamento.class)
+                        System.out.println("\t\tComprimento da maior cadeia: " + estatisticaHash.comprimentoMaiorCadeia);
+                    System.out.println("\t\tColisões: " + estatisticaHash.colisoes);
+                    System.out.println("\t\tTempo de inserção total: " + estatisticaHash.tempoInsercao + "ns");
+                    System.out.println("\t\tBuscas bem-sucedidas: " + estatisticaHash.buscasBemSucedidas);
+                    System.out.println("\t\tBuscas mal-sucedidas: " + estatisticaHash.buscasMalSucedidas);
+                    System.out.println("\t\tTempo de busca total: " + estatisticaHash.tempoBusca + "ns\n");
                 }
             }
+
+            System.out.println(tempoPorConjuntoCSV);
+            System.out.println();
+            System.out.println(colisoesPorConjuntoCSV);
         }
     }
 }

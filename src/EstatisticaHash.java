@@ -1,7 +1,13 @@
 public class EstatisticaHash {
-    public int colisoes;
-    public int elementosInseridos;
+    public long colisoes;
+    public long elementosUnicosInseridos;
     public long comecoInsercao;
     public long fimInsercao;
-    public long duracaoInsercao;
+    public long tempoInsercao;
+    public long comecoBusca;
+    public long fimBusca;
+    public long tempoBusca;
+    public long buscasBemSucedidas;
+    public long buscasMalSucedidas;
+    public long comprimentoMaiorCadeia;
 }

@@ -5,32 +5,51 @@ public class HashRehashing extends Hash {
         estatisticaHash.comecoInsercao = System.nanoTime();
 
         for (int i = 0; i < tamanhoConjuntoDados; i++) {
-            int dado = dados[i];
-            int hash = funcaoHash(dado, tamanhoTabelaHash);
+            if (estatisticaHash.elementosUnicosInseridos == tamanhoTabelaHash) break;
 
-            while (tabelaHash[hash] != null) {
-                // Se o contador for igual o tamanho da tabela hash, então a tabela está cheia.
-                if (estatisticaHash.elementosInseridos >= tamanhoTabelaHash) {
-                    // Não há mais espaço na tabela hash.
-                    estatisticaHash.fimInsercao = System.nanoTime();
-                    estatisticaHash.duracaoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
-                    return estatisticaHash;
-                } else {
-                    // Colisão
-                    estatisticaHash.colisoes++;
-                    hash = funcaoRehash(hash, estatisticaHash.colisoes, tamanhoTabelaHash);
-                }
+            int dado = dados[i];
+            int hash1 = funcaoHash(dado, tamanhoTabelaHash);
+            int hash = hash1;
+            int tentativa = 0;
+
+            while (tabelaHash[hash] != null && tentativa < tamanhoTabelaHash) {
+                estatisticaHash.colisoes++;
+                tentativa++;
+                hash = funcaoRehash(hash1, tentativa, tamanhoTabelaHash);
             }
 
-            // Só insere se o slot estiver vazio
             if (tabelaHash[hash] == null) {
                 tabelaHash[hash] = new Registro(dado);
-                estatisticaHash.elementosInseridos++;
+                estatisticaHash.elementosUnicosInseridos++;
             }
         }
 
         estatisticaHash.fimInsercao = System.nanoTime();
-        estatisticaHash.duracaoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
+        estatisticaHash.tempoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
+
+        // === Busca ===
+        estatisticaHash.comecoBusca = System.nanoTime();
+
+        for (int i = 0; i < tamanhoConjuntoDados; i++) {
+            int dado = dados[i];
+            int hash1 = funcaoHash(dado, tamanhoTabelaHash);
+            int hash = hash1;
+            int tentativa = 0;
+
+            Registro registro = tabelaHash[hash];
+            while (registro != null && registro.getCodigoInteiro() != dado && tentativa < tamanhoTabelaHash) {
+                tentativa++;
+                hash = funcaoRehash(hash1, tentativa, tamanhoTabelaHash);
+                registro = tabelaHash[hash];
+            }
+
+            if (registro != null && registro.getCodigoInteiro() == dado) estatisticaHash.buscasBemSucedidas++;
+            else estatisticaHash.buscasMalSucedidas++;
+        }
+
+        estatisticaHash.fimBusca = System.nanoTime();
+        estatisticaHash.tempoBusca = estatisticaHash.fimBusca - estatisticaHash.comecoBusca;
+
         return estatisticaHash;
     }
 
@@ -39,8 +58,8 @@ public class HashRehashing extends Hash {
         return h < 0 ? -h % modulo : h;
     }
 
-    public int funcaoRehash(int hash, int colisoes, int modulo) {
-        int r = (hash + colisoes * colisoes) % modulo;
+    public int funcaoRehash(int hash1, long tentativa, int modulo) {
+        int r = (hash1 + (int) tentativa * (int) tentativa) % modulo;
         return r < 0 ? -r % modulo : r;
     }
 }

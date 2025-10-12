@@ -8,37 +8,53 @@ public class HashDuplo extends Hash {
             int dado = dados[i];
 
             int hash1 = funcaoHash1(dado, tamanhoTabelaHash);
-
-            // Hash2 sempre ímpar para garantir coprimidade com potências de 2
-            int hash2 = 1 + ((dado & 0x7FFFFFFF) % (tamanhoTabelaHash - 1));
-            if (hash2 % 2 == 0) hash2++; // Garante ímpar
+            int hash2 = 1 + (dado % (tamanhoTabelaHash - 1)); // duplo hash clássico
 
             int hash = hash1;
             int tentativa = 0;
 
-            while (tabelaHash[hash] != null) {
-                if (estatisticaHash.elementosInseridos >= tamanhoTabelaHash) {
-                    // Não há mais espaço na tabela hash.
-                    estatisticaHash.fimInsercao = System.nanoTime();
-                    estatisticaHash.duracaoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
-                    return estatisticaHash;
-                } else {
-                    estatisticaHash.colisoes++;
-                    tentativa++;
-                    hash = (hash1 + tentativa * hash2) % tamanhoTabelaHash;
-                    if (hash < 0) hash += tamanhoTabelaHash;
-                }
+            while (tabelaHash[hash] != null && tentativa < tamanhoTabelaHash) {
+                estatisticaHash.colisoes++;
+                tentativa++;
+                hash = (hash1 + tentativa * hash2) % tamanhoTabelaHash;
+                if (hash < 0) hash += tamanhoTabelaHash;
             }
 
-            // Só insere se o slot estiver vazio
             if (tabelaHash[hash] == null) {
                 tabelaHash[hash] = new Registro(dado);
-                estatisticaHash.elementosInseridos++;
+                estatisticaHash.elementosUnicosInseridos++;
             }
         }
 
         estatisticaHash.fimInsercao = System.nanoTime();
-        estatisticaHash.duracaoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
+        estatisticaHash.tempoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
+
+        estatisticaHash.comecoBusca = System.nanoTime();
+
+        for (int i = 0; i < tamanhoConjuntoDados; i++) {
+            int dado = dados[i];
+
+            int hash1 = funcaoHash1(dado, tamanhoTabelaHash);
+            int hash2 = 1 + (dado % (tamanhoTabelaHash - 1));
+
+            int tentativa = 0;
+            int hash = hash1;
+
+            Registro registro = tabelaHash[hash];
+            while (registro != null && registro.getCodigoInteiro() != dado && tentativa < tamanhoTabelaHash) {
+                tentativa++;
+                hash = (hash1 + tentativa * hash2) % tamanhoTabelaHash;
+                if (hash < 0) hash += tamanhoTabelaHash;
+                registro = tabelaHash[hash];
+            }
+
+            if (registro != null && registro.getCodigoInteiro() == dado) estatisticaHash.buscasBemSucedidas++;
+            else estatisticaHash.buscasMalSucedidas++;
+        }
+
+        estatisticaHash.fimBusca = System.nanoTime();
+        estatisticaHash.tempoBusca = estatisticaHash.fimBusca - estatisticaHash.comecoBusca;
+
         return estatisticaHash;
     }
 
