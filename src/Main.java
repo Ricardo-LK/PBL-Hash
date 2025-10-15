@@ -21,8 +21,8 @@ public class Main {
         Hash[] modulosHash = {new HashRehashing(), new HashEncadeamento(), new HashDuplo()};
 
         // Tamanhos das tabelas hash e dos conjuntos de dados
-        int[] tamanhosTabelasHash = {UM_MIL, DEZ_MIL, CEM_MIL};
-        int[] tamanhosConjuntosDados = {UM_MIL, DEZ_MIL, CEM_MIL};
+        int[] tamanhosTabelasHash = {CEM_MIL, UM_MILHAO, DEZ_MILHOES};
+        int[] tamanhosConjuntosDados = {CEM_MIL, UM_MILHAO, DEZ_MILHOES};
 
         // Arrays com os dados a serem utilizados
         int[] conjuntoDeDados1 = new int[tamanhosConjuntosDados[0]];
@@ -55,6 +55,8 @@ public class Main {
             for (int j = 0; j < 3; j++) {
                 Hash moduloHash = modulosHash[j];
 
+                // if (moduloHash.getClass() != HashRehashing.class) continue;
+
                 System.out.println("\t---------- FUNÇÃO HASH " + moduloHash.getClass().getName() + " ----------");
 
                 // Para cada conjunto de dados
@@ -70,17 +72,17 @@ public class Main {
                     // Utiliza a função hash atual para inserir na respectiva tabela hash
                     EstatisticaHash estatisticaHash = moduloHash.hash(tabelaHash, tamanhoTabelaHash, conjuntoDeDados, tamanhoConjuntoDeDados);
 
-                    tempoInsercaoPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoInsercao + "\n";
-                    tempoBuscaPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoBusca + "\n";
+                    tempoInsercaoPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoInsercao / 1000000.f + "\n";
+                    tempoBuscaPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoBusca / 1000000.f + "\n";
                     colisoesPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.colisoes + "\n";
                     maiorGapPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.maiorGap + "\n";
 
                     System.out.println("\t\tElementos Únicos Inseridos: " + estatisticaHash.elementosUnicosInseridos);
                     System.out.println("\t\tColisões: " + estatisticaHash.colisoes);
-                    System.out.println("\t\tTempo de inserção total: " + estatisticaHash.tempoInsercao + "ns");
+                    System.out.println("\t\tTempo de inserção total: " + estatisticaHash.tempoInsercao / 1000000.f + "ms");
                     System.out.println("\t\tBuscas bem-sucedidas: " + estatisticaHash.buscasBemSucedidas);
                     System.out.println("\t\tBuscas mal-sucedidas: " + estatisticaHash.buscasMalSucedidas);
-                    System.out.println("\t\tTempo de busca total: " + estatisticaHash.tempoBusca + "ns");
+                    System.out.println("\t\tTempo de busca total: " + estatisticaHash.tempoBusca / 1000000.f + "ms");
                     System.out.println("\t\tQuantidade de gaps: " + estatisticaHash.qtdeGaps);
                     System.out.println("\t\tMaior gap: " + estatisticaHash.maiorGap);
                     System.out.println("\t\tMenor gap: " + estatisticaHash.menorGap);

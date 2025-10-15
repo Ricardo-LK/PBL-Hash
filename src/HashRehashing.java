@@ -2,35 +2,44 @@ public class HashRehashing extends Hash {
     @Override
     public EstatisticaHash hash(Registro[] tabelaHash, int tamanhoTabelaHash, int[] dados, int tamanhoConjuntoDados) {
         EstatisticaHash estatisticaHash = new EstatisticaHash();
-
         estatisticaHash.comecoInsercao = System.nanoTime();
 
-        for (int i = 0; i < tamanhoConjuntoDados; i++) {
-            if (estatisticaHash.elementosUnicosInseridos == tamanhoTabelaHash) break;
+        // Para quando a tabela está 90% cheia para evitar degradação
+        int limiteInsercao = (int) (tamanhoTabelaHash * 0.9);
 
+        for (int i = 0; i < tamanhoConjuntoDados && estatisticaHash.elementosUnicosInseridos < limiteInsercao; i++) {
             int dado = dados[i];
             int hash1 = funcaoHash(dado, tamanhoTabelaHash);
             int hash = hash1;
             int tentativa = 0;
+            boolean inserido = false;
 
-            while (tabelaHash[hash] != null && tentativa < tamanhoTabelaHash) {
-                estatisticaHash.colisoes++;
-                tentativa++;
-                hash = funcaoRehash(hash1, tentativa, tamanhoTabelaHash);
-            }
+            // Limita o número máximo de tentativas
+            int maxTentativas = tamanhoTabelaHash / 2;
 
-            if (tabelaHash[hash] == null) {
-                tabelaHash[hash] = new Registro(dado);
-                estatisticaHash.elementosUnicosInseridos++;
+            while (!inserido && tentativa < maxTentativas) {
+                if (tabelaHash[hash] == null) {
+                    tabelaHash[hash] = new Registro(dado);
+                    estatisticaHash.elementosUnicosInseridos++;
+                    inserido = true;
+                } else {
+                    // Verificação rápida de duplicata
+                    if (tabelaHash[hash].getCodigoInteiro() == dado) {
+                        break;
+                    }
+                    estatisticaHash.colisoes++;
+                    tentativa++;
+                    hash = funcaoRehash(hash1, tentativa, tamanhoTabelaHash);
+                }
             }
         }
 
         estatisticaHash.fimInsercao = System.nanoTime();
         estatisticaHash.tempoInsercao = estatisticaHash.fimInsercao - estatisticaHash.comecoInsercao;
 
-        // Maior, menor e média de gaps
+        // Calculando gap
         estatisticaHash.maiorGap = 0;
-        estatisticaHash.menorGap = 2_147_483_647;
+        estatisticaHash.menorGap = 2147483647;
         estatisticaHash.mediaGap = 0;
         estatisticaHash.qtdeGaps = 0;
 
@@ -41,42 +50,26 @@ public class HashRehashing extends Hash {
                 gapAtual++;
             } else {
                 if (gapAtual > 0) {
-                    // Atualiza estatísticas para cada gap encontrado
-                    if (gapAtual > estatisticaHash.maiorGap) {
-                        estatisticaHash.maiorGap = gapAtual;
-                    }
-                    if (gapAtual < estatisticaHash.menorGap) {
-                        estatisticaHash.menorGap = gapAtual;
-                    }
-                    estatisticaHash.mediaGap += gapAtual;
-                    estatisticaHash.qtdeGaps++;
+                    atualizarGaps(estatisticaHash, gapAtual);
                     gapAtual = 0;
                 }
             }
         }
 
-        // Gap no final da tabela
         if (gapAtual > 0) {
-            if (gapAtual > estatisticaHash.maiorGap) {
-                estatisticaHash.maiorGap = gapAtual;
-            }
-            if (gapAtual < estatisticaHash.menorGap) {
-                estatisticaHash.menorGap = gapAtual;
-            }
-            estatisticaHash.mediaGap += gapAtual;
-            estatisticaHash.qtdeGaps++;
+            atualizarGaps(estatisticaHash, gapAtual);
         }
 
-        // Calcula média e trata caso sem gaps
-        if (estatisticaHash.qtdeGaps > 0) {
-            estatisticaHash.mediaGap = estatisticaHash.mediaGap / (double) estatisticaHash.qtdeGaps;
-        } else {
+        // Sem gaps
+        if (estatisticaHash.qtdeGaps == 0) {
             estatisticaHash.maiorGap = 0;
             estatisticaHash.menorGap = 0;
             estatisticaHash.mediaGap = 0;
+        } else {
+            estatisticaHash.mediaGap = estatisticaHash.mediaGap / estatisticaHash.qtdeGaps;
         }
 
-        if (estatisticaHash.menorGap == 2_147_483_647) {
+        if (estatisticaHash.menorGap == 2147483647) {
             estatisticaHash.menorGap = 0;
         }
 
@@ -88,16 +81,27 @@ public class HashRehashing extends Hash {
             int hash1 = funcaoHash(dado, tamanhoTabelaHash);
             int hash = hash1;
             int tentativa = 0;
+            boolean encontrado = false;
 
-            Registro registro = tabelaHash[hash];
-            while (registro != null && registro.getCodigoInteiro() != dado && tentativa < tamanhoTabelaHash) {
-                tentativa++;
-                hash = funcaoRehash(hash1, tentativa, tamanhoTabelaHash);
-                registro = tabelaHash[hash];
+            int maxTentativasBusca = tamanhoTabelaHash;
+
+            while (!encontrado && tentativa < maxTentativasBusca) {
+                Registro registro = tabelaHash[hash];
+                if (registro == null) {
+                    // Cluster quebrado - elemento não existe
+                    break;
+                } else if (registro.getCodigoInteiro() == dado) {
+                    encontrado = true;
+                    estatisticaHash.buscasBemSucedidas++;
+                } else {
+                    tentativa++;
+                    hash = funcaoRehash(hash1, tentativa, tamanhoTabelaHash);
+                }
             }
 
-            if (registro != null && registro.getCodigoInteiro() == dado) estatisticaHash.buscasBemSucedidas++;
-            else estatisticaHash.buscasMalSucedidas++;
+            if (!encontrado) {
+                estatisticaHash.buscasMalSucedidas++;
+            }
         }
 
         estatisticaHash.fimBusca = System.nanoTime();
@@ -106,13 +110,26 @@ public class HashRehashing extends Hash {
         return estatisticaHash;
     }
 
+    private void atualizarGaps(EstatisticaHash estatistica, int gap) {
+        if (gap > estatistica.maiorGap) {
+            estatistica.maiorGap = gap;
+        }
+        if (gap < estatistica.menorGap) {
+            estatistica.menorGap = gap;
+        }
+        estatistica.mediaGap += gap;
+        estatistica.qtdeGaps++;
+    }
+
     public int funcaoHash(int dado, int modulo) {
         int h = (dado ^ (dado >>> 16)) % modulo;
         return h < 0 ? -h % modulo : h;
     }
 
-    public int funcaoRehash(int hash1, long tentativa, int modulo) {
-        int r = (hash1 + (int) tentativa * (int) tentativa) % modulo;
-        return r < 0 ? -r % modulo : r;
+    public int funcaoRehash(int hash1, int tentativa, int modulo) {
+        int incremento = tentativa * tentativa;
+        int r = hash1 + incremento;
+        if (r >= modulo) r %= modulo;
+        return r;
     }
 }
