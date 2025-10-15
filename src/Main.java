@@ -7,9 +7,6 @@ import java.util.Random;
 
 public class Main {
 
-    private final static int CEM = 100;
-    private final static int UM_MIL = 1000;
-    private final static int DEZ_MIL = 10000;
     private final static int CEM_MIL = 100000;
     private final static int UM_MILHAO = 1000000;
     private final static int DEZ_MILHOES = 10000000;
@@ -21,8 +18,8 @@ public class Main {
         Hash[] modulosHash = {new HashRehashing(), new HashEncadeamento(), new HashDuplo()};
 
         // Tamanhos das tabelas hash e dos conjuntos de dados
-        int[] tamanhosTabelasHash = {UM_MIL, DEZ_MIL, CEM_MIL};
-        int[] tamanhosConjuntosDados = {UM_MIL, DEZ_MIL, CEM_MIL};
+        int[] tamanhosTabelasHash = {CEM_MIL, UM_MILHAO, DEZ_MILHOES};
+        int[] tamanhosConjuntosDados = {CEM_MIL, UM_MILHAO, DEZ_MILHOES};
 
         // Arrays com os dados a serem utilizados
         int[] conjuntoDeDados1 = new int[tamanhosConjuntosDados[0]];

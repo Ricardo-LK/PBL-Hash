@@ -395,14 +395,14 @@ python --version  # Python 3.6+ requerido
 ```
 
 ### Execução Completa
+Entrar no IntelliJ e rodar o código `main` no arquivo [`Main`](src/Main.java) 
 ```bash
-# 1. Compilar o projeto
-javac -d out src/*.java
+# 1. Gerar gráficos e análise
+python -m venv .venv
+source .venv/bin/activate
+ou no windows
+.venv/Scripts/activate.bat
 
-# 2. Executar os testes (gera os CSVs)
-java -cp out Main
-
-# 3. Gerar gráficos e análise
 cd plots
 pip install -r requirements.txt
 python plot.py
