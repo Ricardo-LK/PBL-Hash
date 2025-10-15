@@ -256,7 +256,7 @@ No cenário de overload extremo, com 10.000.000 de dados para as mesmas 100.000 
 
 A análise de escalabilidade revela padrões distintos entre as implementações. O Hash por Encadeamento, embora excelente em cenários balanceados, sofre de degradação exponencial sob carga elevada. Seu número de colisões aumenta dramaticamente de 99.215 para 996.848.624, demonstrando que as listas encadeadas tornam-se excessivamente longas e ineficientes sob condições de overload.
 
-O Hash Duplo emerge como a implementação mais escalável, mantendo performance consistente across todos os cenários. Suas colisões permanecem estáveis em torno de 168.000, independentemente do nível de overload, graças à dupla função hash que distribui a carga de maneira mais uniforme pela tabela.
+O Hash Duplo emerge como a implementação mais escalável, mantendo performance consistente em todos os cenários. Suas colisões permanecem estáveis em torno de 168.000, independentemente do nível de overload, graças à dupla função hash que distribui a carga de maneira mais uniforme pela tabela.
 
 O Hash com Rehashing apresenta um comportamento interessante: enquanto sua performance de inserção melhora com o aumento do overload, o tempo de busca degrada significativamente, indo de 20.77 milissegundos para 917.44 milissegundos no cenário de overload extremo.
 
@@ -385,7 +385,7 @@ Quando submetemos as implementações a um cenário de overload (10.000.000 dado
 
 A análise de escalabilidade na tabela de 1.000.000 posições revela padrões consistentes com a análise anterior, porém com algumas particularidades importantes. O Hash por Encadeamento mantém sua excelente performance em cenários de baixa e média densidade, mas demonstra completa falta de escalabilidade sob condições de overload extremo.
 
-O Hash Duplo consolida-se como a implementação mais consistente across todos os cenários, especialmente na inserção onde mantém tempos estáveis mesmo sob carga dez vezes superior à capacidade da tabela. Sua performance de 123.94ms no cenário de overload é notavelmente próxima à do cenário balanceado (111.11ms).
+O Hash Duplo consolida-se como a implementação mais consistente em todos os cenários, especialmente na inserção onde mantém tempos estáveis mesmo sob carga dez vezes superior à capacidade da tabela. Sua performance de 123.94ms no cenário de overload é notavelmente próxima à do cenário balanceado (111.11ms).
 
 O Hash com Rehashing apresenta um comportamento peculiar: seu tempo de inserção melhora significativamente do cenário balanceado (217.59ms) para o cenário de overload (137.89ms), sugerindo que o mecanismo de rehashing torna-se mais eficiente quando a tabela está sob alta pressão.
 
