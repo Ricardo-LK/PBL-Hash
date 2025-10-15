@@ -45,6 +45,8 @@ public class Main {
             String tempoBuscaPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,tempoBusca\n";
             String colisoesPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,colisoes\n";
             String maiorGapPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,maiorGap\n";
+            String menorGapPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,menorGap\n";
+            String mediaGapPorConjuntoCSV = "funcaoHash,tamanhoConjuntoDados,mediaGap\n";
 
             System.out.println("=========== TABELA HASH DE " + tamanhoTabelaHash + " ELEMENTOS ===========");
 
@@ -73,6 +75,8 @@ public class Main {
                     tempoBuscaPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.tempoBusca / 1000000.f + "\n";
                     colisoesPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.colisoes + "\n";
                     maiorGapPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.maiorGap + "\n";
+                    menorGapPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.menorGap + "\n";
+                    mediaGapPorConjuntoCSV += moduloHash.getClass().getName() + "," + tamanhoConjuntoDeDados + "," + estatisticaHash.mediaGap + "\n";
 
                     System.out.println("\t\tElementos Únicos Inseridos: " + estatisticaHash.elementosUnicosInseridos);
                     System.out.println("\t\tColisões: " + estatisticaHash.colisoes);
@@ -122,6 +126,20 @@ public class Main {
             // Maior Gap
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(diretorio + "maiorGap.csv"))) {
                 writer.write(maiorGapPorConjuntoCSV);
+            } catch (IOException e) {
+                System.err.println("Falha ao escrever arquivo de saída: " + e.getMessage());
+            }
+
+            // Menor Gap
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(diretorio + "menorGap.csv"))) {
+                writer.write(menorGapPorConjuntoCSV);
+            } catch (IOException e) {
+                System.err.println("Falha ao escrever arquivo de saída: " + e.getMessage());
+            }
+
+            // Média Gap
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(diretorio + "mediaGap.csv"))) {
+                writer.write(mediaGapPorConjuntoCSV);
             } catch (IOException e) {
                 System.err.println("Falha ao escrever arquivo de saída: " + e.getMessage());
             }
