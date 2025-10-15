@@ -1,0 +1,10 @@
+funcaoHash,tamanhoConjuntoDados,colisoes
+HashRehashing,100000,464
+HashRehashing,1000000,54828
+HashRehashing,10000000,16091601
+HashEncadeamento,100000,921
+HashEncadeamento,1000000,99328
+HashEncadeamento,10000000,9949762
+HashDuplo,100000,464
+HashDuplo,1000000,53403
+HashDuplo,10000000,15007236

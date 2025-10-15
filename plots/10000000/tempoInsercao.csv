@@ -1,0 +1,10 @@
+funcaoHash,tamanhoConjuntoDados,tempoInsercao
+HashRehashing,100000,16.145174
+HashRehashing,1000000,354.78525
+HashRehashing,10000000,3613.4104
+HashEncadeamento,100000,14.561485
+HashEncadeamento,1000000,166.29703
+HashEncadeamento,10000000,3495.388
+HashDuplo,100000,21.509302
+HashDuplo,1000000,320.47177
+HashDuplo,10000000,3753.5923

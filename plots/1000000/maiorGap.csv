@@ -1,0 +1,10 @@
+funcaoHash,tamanhoConjuntoDados,maiorGap
+HashRehashing,100000,116
+HashRehashing,1000000,8
+HashRehashing,10000000,9
+HashEncadeamento,100000,116
+HashEncadeamento,1000000,15
+HashEncadeamento,10000000,1
+HashDuplo,100000,109
+HashDuplo,1000000,6
+HashDuplo,10000000,6
