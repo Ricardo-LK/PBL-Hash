@@ -25,81 +25,123 @@ Este projeto implementa e analisa o desempenho de diferentes abordagens de tabel
 └── out/                  # Arquivos compilados
 ```
 
+---
+
 ## Implementações de Tabela Hash
 
-### 1. Hash com Rehashing Linear/Quadrático (`HashRehashing.java`)
-- **Função Hash Principal**: XOR com shift right 16 bits + módulo
-- **Estratégia de Rehashing**: Quadrática (i²)
-- **Tratamento de Colisões**: Busca por posição vazia no vetor usando rehashing quadrático
-- **Fórmula**: `hash = (hash1 + tentativa²) % modulo`
+## Estruturas de Dados e Classes
+
+### Classe `EstatisticaHash`
+Armazena todas as métricas coletadas durante os testes:
+- **Colisões**: Número total de colisões ocorridas
+- **Elementos Únicos Inseridos**: Quantidade de elementos inseridos sem duplicatas
+- **Tempos**: Inserção e busca em nanossegundos
+- **Buscas**: Contadores de buscas bem-sucedidas e mal-sucedidas
+- **Gaps**: Estatísticas sobre espaços vazios na tabela (quantidade, menor, maior, média)
+
+### Classe `Registro`
+Elemento básico armazenado na tabela hash:
+- **Encadeamento**: Suporte para listas encadeadas (`proximo`)
+- **Codificação**: Conversão automática de inteiro para string de 9 dígitos
+- **Flexibilidade**: Usado por todas as estratégias de hash
+
+## Estratégias de Hash Implementadas
+
+### 1. Hash com Encadeamento (`HashEncadeamento.java`)
+- **Função Hash**: `(dado ^ (dado >>> 16)) % modulo` com tratamento de negativo
+- **Tratamento de Colisões**: Listas encadeadas em cada bucket
+- **Vantagens**:
+    - Capacidade ilimitada de elementos
+    - Não requer redimensionamento
+    - Simplicidade de implementação
+- **Métricas Especiais**: Identifica as 3 maiores listas encadeadas
 
 ### 2. Hash Duplo (`HashDuplo.java`)
-- **Primeira Função Hash**: XOR com shift right 16 bits + módulo
-- **Segunda Função Hash**: `1 + (dado % (tamanhoTabelaHash - 1))` (hash duplo clássico)
-- **Estratégia**: `hash = (hash1 + tentativa * hash2) % modulo`
-- **Vantagem**: Distribuição mais uniforme que rehashing linear/quadrático
+- **Função Hash 1**: `(dado ^ (dado >>> 16)) % modulo`
+- **Função Hash 2**: `1 + (dado % (tamanhoTabelaHash - 1))`
+- **Estratégia de Resolução**: `hash = hash1 + tentativa * hash2`
+- **Otimizações**:
+    - Limite de 90% de carga para evitar degradação
+    - Número máximo de tentativas = tamanhoTabelaHash / 2
+    - Tratamento robusto de overflow/underflow
 
-### 3. Hash com Encadeamento (`HashEncadeamento.java`)
-- **Função Hash**: XOR com shift right 16 bits + módulo
-- **Estratégia**: Listas encadeadas em cada bucket
-- **Característica**: Capacidade ilimitada de elementos
-- **Tratamento de Colisões**: Encadeamento na mesma posição
+### 3. Hash com Rehashing Quadrático (`HashRehashing.java`)
+- **Função Hash Principal**: `(dado ^ (dado >>> 16)) % modulo`
+- **Função Rehash**: `hash1 + tentativa²` (incremento quadrático)
+- **Características**:
+    - Limite de 90% de carga
+    - Tratamento de duplicatas durante inserção
+    - Busca com limite de tentativas
 
-## Parâmetros do Estudo
+## Parâmetros e Configuração Experimental
 
-### Tamanhos do Vetor Hash
-- **Pequeno**: 1.000 posições
-- **Médio**: 10.000 posições  
-- **Grande**: 100.000 posições
+### Tamanhos de Tabela Hash
+- **Pequeno**: 100.000 posições
+- **Médio**: 1.000.000 posições
+- **Grande**: 10.000.000 posições
 
 ### Conjuntos de Dados
-- **Pequeno**: 1.000 registros
-- **Médio**: 10.000 registros  
-- **Grande**: 100.000 registros
+- **Pequeno**: 100.000 registros
+- **Médio**: 1.000.000 registros
+- **Grande**: 10.000.000 registros
 
-**Seed Utilizada**: `2025` (para garantir reproduibilidade dos testes)
+**Configuração Experimental**:
+- **Seed**: `2025` (garante reproduibilidade)
+- **Faixa de Dados**: Inteiros de 1 a 2.147.483.647
+- **Ambiente**: Java SE com medição de alta precisão
 
-**Faixa de Dados**: Números inteiros de 1 a 2.147.483.647
+## Métricas Coletadas
 
-## Métricas Avaliadas
+### 1. Desempenho Temporal
+- **Tempo de Inserção**: Medido em nanossegundos com `System.nanoTime()`
+- **Tempo de Busca**: Inclui todas as operações de busca no conjunto de dados
 
-### 1. Tempo de Inserção
-- Tempo total para inserir todos os elementos
-- Medido em nanossegundos (ns)
-- Coletado usando `System.nanoTime()`
+### 2. Eficiência de Colisão
+- **Colisões Totais**: Diferente para cada estratégia:
+    - **Encadeamento**: Elementos adicionais em buckets + travessias
+    - **Hash Duplo/Rehashing**: Tentativas de rehashing necessárias
 
-### 2. Tempo de Busca
-- Tempo total para buscar todos os elementos
-- Medido em nanossegundos (ns)
-- Inclui buscas bem-sucedidas e mal-sucedidas
+### 3. Análise de Distribuição
+- **Gaps**: Sequências de posições vazias consecutivas
+    - Quantidade total de gaps
+    - Menor e maior gap encontrado
+    - Média do tamanho dos gaps
+- **Listas Encadeadas**: Para encadeamento, tamanho das 3 maiores listas
 
-### 3. Número de Colisões
-- **Para Rehashing/Hash Duplo**: Número de tentativas de rehashing necessárias
-- **Para Encadeamento**: Número de elementos além do primeiro em cada bucket + travessias durante inserção
-
-### 4. Análise de Distribuição
-- **Três Maiores Listas**: Para encadeamento, tamanho das três maiores listas
-- **Gaps**: Menor, maior e média de espaços vazios entre elementos no vetor
-- **Quantidade de Gaps**: Número total de sequências vazias na tabela
-
-### 5. Eficiência de Busca
+### 4. Eficácia de Busca
 - **Buscas Bem-sucedidas**: Elementos encontrados na tabela
 - **Buscas Mal-sucedidas**: Elementos não encontrados
 
-## Metodologia Experimental
+## Metodologia de Teste
 
-### Configuração dos Testes
-- **Ambiente**: Java SE
-- **Medições**: 9 combinações (3 tamanhos de tabela × 3 tamanhos de dados)
-- **Repetição**: 3 funções hash diferentes para cada combinação
-- **Consistência**: Mesmos conjuntos de dados para todas as funções hash
+### Processo Experimental
+1. **Preparação**: Geração de dados determinística com seed fixa
+2. **Execução**: Para cada combinação (tamanho tabela × tamanho dados × estratégia hash):
+    - Limpeza completa da tabela hash
+    - Inserção com coleta de estatísticas
+    - Busca completa do conjunto de dados
+3. **Coleta**: Medições precisas de tempo e contadores
+4. **Exportação**: Dados automaticamente salvos em CSV para análise
 
-### Processo de Coleta
-1. Geração de dados com seed fixa
-2. Limpeza da tabela hash entre testes
-3. Medição precisa de tempos com `nanoTime()`
-4. Coleta abrangente de estatísticas
-5. Exportação automatizada para CSV
+### Estrutura de Arquivos de Saída
+```
+plots/
+├── 100000/
+│   ├── tempoInsercao.csv
+│   ├── tempoBusca.csv
+│   ├── colisoes.csv
+│   └── maiorGap.csv
+├── 1000000/
+└── 10000000/
+```
+
+### Variáveis Controladas
+- Mesmos conjuntos de dados para todas as estratégias
+- Ambiente de execução consistente
+- Limpeza adequada entre testes
+- Tratamento uniforme de casos especiais (sem gaps, etc.)
+
+---
 
 ## Resultados Detalhados Baseados nos Dados Empíricos
 
@@ -530,17 +572,27 @@ O HashRehashing posiciona-se como uma solução balanceada, oferecendo performan
 
 ### Tabela Comparativa de Performance com Dados Empíricos
 
-| Métrica | Tamanho | HashRehashing | HashEncadeamento | HashDuplo | Vencedor | Fator de Melhoria |
-|---------|---------|---------------|------------------|-----------|----------|-------------------|
-| **Inserção (ns)** | 1.000 | 132.193 | 114.741 | **29.975** | HashDuplo | 4.4× |
-| **Inserção (ns)** | 10.000 | 2.082.388 | 2.300.149 | **1.859.799** | HashDuplo | 1.1× |
-| **Inserção (ns)** | 100.000 | 42.855.681 | **8.710.984** | 3.144.902.200 | Encadeamento | 4.9× |
-| **Busca (ns)** | 1.000 | 112.437 | **19.687** | 139.296 | Encadeamento | 5.7× |
-| **Busca (ns)** | 10.000 | 1.629.636 | **631.281** | 2.923.134 | Encadeamento | 2.6× |
-| **Busca (ns)** | 100.000 | 32.266.816 | **3.765.222** | 4.270.411.300 | Encadeamento | 8.6× |
-| **Colisões** | 1.000 | **52** | 94 | **52** | Rehashing/Duplo | - |
-| **Colisões** | 10.000 | 154.136 | **10.144** | 190.744 | Encadeamento | 15.2× |
-| **Colisões** | 100.000 | 2.243.940 | **99.673** | 2.550.075 | Encadeamento | 22.5× |
+| Métrica           | Tamanho    | HashRehashing | HashEncadeamento | HashDuplo      | Vencedor        |
+|-------------------|------------|---------------|------------------|----------------|-----------------|
+| **Inserção (ms)** | 100.000    | 29.29         | 9242.99          | **12.86**      | HashDuplo       |
+| **Inserção (ms)** | 1.000.000  | 121.67        | 2046.11          | **80.96**      | HashDuplo       |
+| **Inserção (ms)** | 10.000.000 | 870.66        | **780.58**       | 1018.37        | Encadeamento    |
+| **Busca (ms)**    | 100.000    | **390.55**    | 6344.90          | 432.20         | Encadeamento    |
+| **Busca (ms)**    | 1.000.000  | 801.65        | 906.13           | **755.61**     | Encadeamento    |
+| **Busca (ms)**    | 10.000.000 | 656.61        | **229.99**       | 888.29         | Encadeamento    |
+| **Colisões**      | 100.000    | 160275.33     | 335645675.00     | **159105.33**  | HashDuplo       |
+| **Colisões**      | 1.000.000  | 1076378.33    | 33558513.67      | **949784.00**  | HashDuplo       |
+| **Colisões**      | 10.000.000 | 5382297.67    | 3350003.67       | **5020367.67** | HashDuplo       |
+| **Maior Gap**     | 100.000    | **7**         | 4                | **7**          | Rehashing/Duplo |
+| **Maior Gap**     | 1.000.000  | 44.33         | 44               | **40.33**      | HashDuplo       |
+| **Maior Gap**     | 10.000.000 | 447           | 448.33           | **445.67**     | HashDuplo       |
+| **Menor Gap**     | 100.000    | **1**         | 0.67             | **1**          | Rehashing/Duplo |
+| **Menor Gap**     | 1.000.000  | **1**         | **1**            | **1**          | Empate          |
+| **Menor Gap**     | 10.000.000 | 447           | 448.33           | **445.67**     | HashDuplo       |
+| **Média Gap**     | 100.000    | 1.21          | **0.86**         | 1.11           | Encadeamento    |
+| **Média Gap**     | 1.000.000  | 4.29          | 4.36             | **4.07**       | HashDuplo       |
+| **Média Gap**     | 10.000.000 | 37.38         | 37.53            | **37.05**      | HashDuplo       |
+
 
 ### Análise de Comportamento por Fator de Carga
 
