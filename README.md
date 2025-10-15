@@ -105,101 +105,417 @@ Este projeto implementa e analisa o desempenho de diferentes abordagens de tabel
 
 ### Análise por Tamanho de Tabela Hash
 
-#### Tabela Pequena (1.000 posições)
-
-![Tempo de Inserção - 1000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000_tempoInsercao.png)
-![Tempo de Busca - 1000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000_tempoBusca.png)
-![Colisões - 1000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000_colisoes.png)
-![Maior Gap - 1000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000_maiorGap.png)
-
-**Resultados Empíricos Detalhados - Tabela 1.000 com 1.000 dados**:
-
-**Tempo de Inserção (ns)**:
-- **HashRehashing**: 132.193 ns
-- **HashEncadeamento**: 114.741 ns  
-- **HashDuplo**: 29.975 ns
-
-**Tempo de Busca (ns)**:
-- **HashRehashing**: 112.437 ns
-- **HashEncadeamento**: 19.687 ns
-- **HashDuplo**: 139.296 ns
-
-**Colisões**:
-- **HashRehashing**: 52 colisões
-- **HashEncadeamento**: 94 colisões
-- **HashDuplo**: 52 colisões
-
-**Maior Gap**:
-- **HashRehashing**: 797 posições
-- **HashEncadeamento**: 797 posições  
-- **HashDuplo**: 797 posições
-
-**Análise Detalhada - Tabela 1.000**:
-O HashDuplo demonstrou performance excepcional em inserção (29.975 ns), sendo **4.4× mais rápido** que o Rehashing. No entanto, paradoxalmente, foi o mais lento em operações de busca. O maior gap de 797 posições indica distribuição não uniforme, com grandes áreas vazias na tabela (79.7% da tabela vazia em sequência). O encadeamento mostrou excelente performance em buscas, sendo **5.7× mais rápido** que o Rehashing. As baixas contagens de colisões (52-94) indicam que todas as estratégias funcionam bem com fator de carga 1.0 em tabelas pequenas.
-
-#### Tabela Média (10.000 posições)
-
-![Tempo de Inserção - 10000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000_tempoInsercao.png)
-![Tempo de Busca - 10000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000_tempoBusca.png)
-![Colisões - 10000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000_colisoes.png)
-![Maior Gap - 10000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000_maiorGap.png)
-
-**Resultados Empíricos Detalhados - Tabela 10.000**:
-
-**Tempo de Inserção (ns)**:
-- **HashRehashing**: 2.082.388 ns
-- **HashEncadeamento**: 2.300.149 ns
-- **HashDuplo**: 1.859.799 ns
-
-**Tempo de Busca (ns)**:
-- **HashRehashing**: 1.629.636 ns
-- **HashEncadeamento**: 631.281 ns
-- **HashDuplo**: 2.923.134 ns
-
-**Colisões**:
-- **HashRehashing**: 154.136 colisões
-- **HashEncadeamento**: 10.144 colisões
-- **HashDuplo**: 190.744 colisões
-
-**Maior Gap**:
-- **HashRehashing**: 89 posições
-- **HashEncadeamento**: 89 posições
-- **HashDuplo**: 89 posições
-
-**Análise Detalhada - Tabela 10.000**:
-Neste tamanho, o HashDuplo manteve sua vantagem em inserção (1.859.799 ns), enquanto o encadeamento consolidou sua liderança em buscas (631.281 ns), sendo **2.6× mais rápido** que o Rehashing. O aumento significativo nas colisões do HashDuplo (190.744 vs 52 na tabela menor) sugere que a estratégia de hash duplo é mais sensível ao aumento do fator de carga. A redução do maior gap para 89 posições (0.89% da tabela) indica melhor distribuição espacial comparada à tabela de 1.000 posições.
-
-#### Tabela Grande (100.000 posições)
+#### Tabela Pequena (100.000 posições)
 
 ![Tempo de Inserção - 100000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/100000_tempoInsercao.png)
 ![Tempo de Busca - 100000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/100000_tempoBusca.png)
 ![Colisões - 100000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/100000_colisoes.png)
 ![Maior Gap - 100000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/100000_maiorGap.png)
+![Menor Gap - 100000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/100000_menorGap.png)
+![Media Gap - 100000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/100000_mediaGap.png)
 
-**Resultados Empíricos Detalhados - Tabela 100.000**:
+**Resultados Empíricos Detalhados**
+
+### Tabela 100.000 posições com 100.000 dados:
 
 **Tempo de Inserção (ns)**:
-- **HashRehashing**: 42.855.681 ns
-- **HashEncadeamento**: 8.710.984 ns
-- **HashDuplo**: 3.144.902.200 ns
+- **HashRehashing**: 41.35ms
+- **HashEncadeamento**: 16.92ms
+- **HashDuplo**: 18.66ms
 
 **Tempo de Busca (ns)**:
-- **HashRehashing**: 32.266.816 ns
-- **HashEncadeamento**: 3.765.222 ns
-- **HashDuplo**: 4.270.411.300 ns
+- **HashRehashing**: 20.77ms
+- **HashEncadeamento**: 4.24ms
+- **HashDuplo**: 10.58ms
 
 **Colisões**:
-- **HashRehashing**: 2.243.940 colisões
-- **HashEncadeamento**: 99.673 colisões
-- **HashDuplo**: 2.550.075 colisões
+- **HashRehashing**: 159.238 colisões
+- **HashEncadeamento**: 99.215 colisões
+- **HashDuplo**: 168.697 colisões
 
 **Maior Gap**:
+- **HashRehashing**: 6 posições
+- **HashEncadeamento**: 11 posições  
+- **HashDuplo**: 5 posições
+
+**Menor Gap**:
 - **HashRehashing**: 1 posição
-- **HashEncadeamento**: 11 posições
+- **HashEncadeamento**: 1 posição
 - **HashDuplo**: 1 posição
 
-**Análise Detalhada - Tabela 100.000**:
-Resultados dramáticos emergem neste cenário. O HashDuplo sofreu uma **degradação catastrófica**, com tempos de inserção e busca na casa dos bilhões de nanossegundos (3.14 segundos e 4.27 segundos respectivamente). Em contraste, o encadeamento mostrou performance robusta, com apenas 8.7ms para inserção e 3.7ms para busca, sendo **4.9× mais rápido** em inserção e **8.6× mais rápido** em busca que o Rehashing. O Rehashing apresentou comportamento intermediário, mas com número elevado de colisões (2.2 milhões). A distribuição quase perfeita (gaps de 1-11 posições) indica excelente espalhamento das funções hash.
+**Média Gap**:
+- **HashRehashing**: 1.21 posições
+- **HashEncadeamento**: 1.58 posições
+- **HashDuplo**: 1.11 posições
+
+### Tabela 100.000 posições com 1.000.000 dados:
+
+**Tempo de Inserção (ns)**:
+- **HashRehashing**: 27.19ms
+- **HashEncadeamento**: 626.12ms
+- **HashDuplo**: 9.70ms
+
+**Tempo de Busca (ns)**:
+- **HashRehashing**: 233.44ms
+- **HashEncadeamento**: 147.15ms
+- **HashDuplo**: 114.14ms
+
+**Colisões**:
+- **HashRehashing**: 159.790 colisões
+- **HashEncadeamento**: 9.989.186 colisões
+- **HashDuplo**: 140.452 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 7 posições
+- **HashEncadeamento**: 1 posições
+- **HashDuplo**: 5 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 1.21 posições
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1.11 posições
+
+### Tabela 100.000 posições com 10.000.000 dados:
+
+**Tempo de Inserção (ns)**:
+- **HashRehashing**: 19.05ms
+- **HashEncadeamento**: 27085.93ms
+- **HashDuplo**: 10.21ms
+
+**Tempo de Busca (ns)**:
+- **HashRehashing**: 917.44ms
+- **HashEncadeamento**: 18883.33ms
+- **HashDuplo**: 1171.88ms
+
+**Colisões**:
+- **HashRehashing**: 161.798 colisões
+- **HashEncadeamento**: 996.848.624 colisões
+- **HashDuplo**: 168.167 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 8 posições
+- **HashEncadeamento**: 0 posições
+- **HashDuplo**: 5 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 0 posições
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 1.20 posições
+- **HashEncadeamento**: 0 posições
+- **HashDuplo**: 1.11 posições
+
+## Análise de Performance Comparativa Tabela 100.000
+
+### Desempenho por Cenário de Carga
+
+No cenário balanceado, onde a tabela possui 100.000 posições para 100.000 dados, o Hash por Encadeamento demonstra superioridade indiscutível. Seu tempo de inserção de 16,92 milissegundos e tempo de busca de apenas 4,24 milissegundos representam a melhor performance geral entre todas as implementações testadas. O Hash Duplo apresenta performance equilibrada com 18,66 milissegundos para inserção e 10,58 milissegundos para busca, enquanto o Hash com Rehashing mostra deficiências significativas com 41,35 milissegundos na inserção e 20,77 milissegundos na busca.
+
+Quando submetemos as implementações a um cenário de overload moderado, com 1.000.000 de dados para 100.000 posições, observamos uma mudança drástica no panorama de performance. O Hash Duplo assume a liderança com notáveis 9,70 milissegundos para inserção e 114,14 milissegundos para busca. O Hash com Rehashing mostra melhoria relativa na inserção, reduzindo para 27,19 milissegundos. Entretanto, o Hash por Encadeamento sofre um colapso catastrófico na performance, com tempo de inserção explodindo para 626,12 milissegundos - aproximadamente 37 vezes mais lento que no cenário balanceado.
+
+No cenário de overload extremo, com 10.000.000 de dados para as mesmas 100.000 posições, o Hash Duplo mantém sua estabilidade com 10,21 milissegundos para inserção. O Hash com Rehashing continua apresentando performance consistente na inserção com 19,05 milissegundos. O Hash por Encadeamento, no entanto, experimenta uma degradação inaceitável, atingindo 27.085,93 milissegundos na inserção e 18.883,33 milissegundos na busca, tornando-se praticamente inutilizável para aplicações que demandam performance.
+
+### Análise de Escalabilidade e Comportamento
+
+A análise de escalabilidade revela padrões distintos entre as implementações. O Hash por Encadeamento, embora excelente em cenários balanceados, sofre de degradação exponencial sob carga elevada. Seu número de colisões aumenta dramaticamente de 99.215 para 996.848.624, demonstrando que as listas encadeadas tornam-se excessivamente longas e ineficientes sob condições de overload.
+
+O Hash Duplo emerge como a implementação mais escalável, mantendo performance consistente across todos os cenários. Suas colisões permanecem estáveis em torno de 168.000, independentemente do nível de overload, graças à dupla função hash que distribui a carga de maneira mais uniforme pela tabela.
+
+O Hash com Rehashing apresenta um comportamento interessante: enquanto sua performance de inserção melhora com o aumento do overload, o tempo de busca degrada significativamente, indo de 20,77 milissegundos para 917,44 milissegundos no cenário de overload extremo.
+
+### Análise de Distribuição e Eficiência
+
+A distribuição espacial analisada através dos gaps revela que o Hash Duplo mantém a distribuição mais consistente, com gap médio de aproximadamente 1,11 posições em todos os cenários. O Hash por Encadeamento tende a uma distribuição perfeita sob alta carga, com gap médio chegando a zero no cenário de overload extremo, embora essa distribuição ideal não se traduza em boa performance devido ao custo do tratamento de colisões.
+
+#### Tabela Média (1.000.000 posições)
+
+![Tempo de Inserção - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000000_tempoInsercao.png)
+![Tempo de Busca - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000000_tempoBusca.png)
+![Colisões - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000000_colisoes.png)
+![Maior Gap - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000000_maiorGap.png)
+![Menor Gap - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000000_menorGap.png)
+![Media Gap - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/1000000_mediaGap.png)
+
+**Resultados Empíricos Detalhados - Tabela 1.000.000 posições**
+
+### Tabela 1.000.000 posições com 100.000 dados:
+
+**Tempo de Inserção (ms)**:
+- **HashRehashing**: 9,52ms
+- **HashEncadeamento**: 5,14ms
+- **HashDuplo**: 7,83ms
+
+**Tempo de Busca (ms)**:
+- **HashRehashing**: 7,08ms
+- **HashEncadeamento**: 1,55ms
+- **HashDuplo**: 2,49ms
+
+**Colisões**:
+- **HashRehashing**: 5.507 colisões
+- **HashEncadeamento**: 9.927 colisões
+- **HashDuplo**: 5.341 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 116 posições
+- **HashEncadeamento**: 116 posições
+- **HashDuplo**: 109 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 10,46 posições
+- **HashEncadeamento**: 10,51 posições
+- **HashDuplo**: 10,00 posições
+
+### Tabela 1.000.000 posições com 1.000.000 dados:
+
+**Tempo de Inserção (ms)**:
+- **HashRehashing**: 217,59ms
+- **HashEncadeamento**: 124,44ms
+- **HashDuplo**: 111,11ms
+
+**Tempo de Busca (ms)**:
+- **HashRehashing**: 206,01ms
+- **HashEncadeamento**: 44,59ms
+- **HashDuplo**: 110,05ms
+
+**Colisões**:
+- **HashRehashing**: 1.610.524 colisões
+- **HashEncadeamento**: 995.976 colisões
+- **HashDuplo**: 1.412.527 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 8 posições
+- **HashEncadeamento**: 15 posições
+- **HashDuplo**: 6 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 1,21 posições
+- **HashEncadeamento**: 1,58 posições
+- **HashDuplo**: 1,11 posições
+
+### Tabela 1.000.000 posições com 10.000.000 dados:
+
+**Tempo de Inserção (ms)**:
+- **HashRehashing**: 137,89ms
+- **HashEncadeamento**: 6008,74ms
+- **HashDuplo**: 123,94ms
+
+**Tempo de Busca (ms)**:
+- **HashRehashing**: 2191,87ms
+- **HashEncadeamento**: 2672,24ms
+- **HashDuplo**: 2154,29ms
+
+**Colisões**:
+- **HashRehashing**: 1.613.104 colisões
+- **HashEncadeamento**: 99.669.638 colisões
+- **HashDuplo**: 1.431.484 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 9 posições
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 6 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 1,20 posições
+- **HashEncadeamento**: 1,00 posição
+- **HashDuplo**: 1,11 posições
+
+## Análise de Performance Comparativa Tabela 1.000.000
+
+### Desempenho por Cenário de Carga
+
+No cenário de baixa densidade, onde a tabela possui 1.000.000 de posições para apenas 100.000 dados, o Hash por Encadeamento demonstra performance superior tanto na inserção (5,14ms) quanto na busca (1,55ms). O Hash Duplo apresenta performance intermediária com 7,83ms para inserção e 2,49ms para busca, enquanto o Hash com Rehashing mostra os piores resultados com 9,52ms na inserção e 7,08ms na busca.
+
+No cenário balanceado ideal, com 1.000.000 de dados para 1.000.000 de posições, observamos uma distribuição mais equilibrada de performance. O Hash por Encadeamento mantém sua liderança na busca com impressionantes 44,59ms, enquanto na inserção o Hash Duplo assume vantagem com 111,11ms contra 124,44ms do Encadeamento e 217,59ms do Rehashing.
+
+Quando submetemos as implementações a um cenário de overload (10.000.000 dados para 1.000.000 posições), o panorama muda drasticamente. O Hash Duplo emerge como o mais eficiente na inserção com apenas 123,94ms, seguido pelo Hash com Rehashing com 137,89ms. O Hash por Encadeamento sofre uma degradação catastrófica, com tempo de inserção explodindo para 6008,74ms - aproximadamente 48 vezes mais lento que o Hash Duplo.
+
+### Análise de Escalabilidade e Comportamento
+
+A análise de escalabilidade na tabela de 1.000.000 posições revela padrões consistentes com a análise anterior, porém com algumas particularidades importantes. O Hash por Encadeamento mantém sua excelente performance em cenários de baixa e média densidade, mas demonstra completa falta de escalabilidade sob condições de overload extremo.
+
+O Hash Duplo consolida-se como a implementação mais consistente across todos os cenários, especialmente na inserção onde mantém tempos estáveis mesmo sob carga dez vezes superior à capacidade da tabela. Sua performance de 123,94ms no cenário de overload é notavelmente próxima à do cenário balanceado (111,11ms).
+
+O Hash com Rehashing apresenta um comportamento peculiar: seu tempo de inserção melhora significativamente do cenário balanceado (217,59ms) para o cenário de overload (137,89ms), sugerindo que o mecanismo de rehashing torna-se mais eficiente quando a tabela está sob alta pressão.
+
+### Análise de Distribuição e Eficiência
+
+A distribuição espacial analisada através dos gaps revela padrões interessantes. No cenário de baixa densidade, todos os métodos apresentam gaps médios elevados (em torno de 10 posições), refletindo a dispersão natural em uma tabela pouco ocupada.
+
+À medida que a densidade aumenta, os gaps médios convergem para valores próximos de 1, indicando distribuição quase ideal. O Hash por Encadeamento atinge distribuição perfeita (gap médio de 1,00) no cenário de overload, enquanto o Hash Duplo mantém consistência notável com gap médio de 1,11 em todos os cenários de média e alta densidade.
+
+O número de colisões segue padrão esperado: o Hash por Encadeamento apresenta menor número de colisões no cenário balanceado, mas sofre aumento exponencial sob overload (99,6 milhões de colisões). Já o Hash Duplo e Rehashing mantêm números de colisões relativamente estáveis independentemente da carga.
+
+### Conclusões Específicas para Tabela 1.000.000
+
+A tabela maior (1.000.000 vs 100.000 posições) demonstra melhor capacidade de absorver carga sem degradação severa de performance. Enquanto na tabela menor o Hash por Encadeamento tornava-se inutilizável sob overload, na tabela maior ele ainda mantém performance aceitável na busca mesmo com carga 10x superior.
+
+O Hash Duplo confirma sua superioridade como solução mais balanceada, oferecendo boa performance em todos os cenários e excelente escalabilidade. O Hash com Rehashing mostra melhorias significativas em relação à tabela menor, especialmente na inserção sob alta carga.
+
+Esta análise reforça que a escolha do método de hash ideal depende criticamente do cenário de uso esperado e da relação entre tamanho da tabela e volume de dados a ser armazenado.
+#### Tabela Grande (10.000.000 posições)
+
+![Tempo de Inserção - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000000_tempoInsercao.png)
+![Tempo de Busca - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000000_tempoBusca.png)
+![Colisões - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000000_colisoes.png)
+![Maior Gap - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000000_maiorGap.png)
+![Menor Gap - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000000_menorGap.png)
+![Media Gap - 10000000](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/10000000_mediaGap.png)
+
+**Resultados Empíricos Detalhados - Tabela 10.000.000 posições**
+
+### Tabela 10.000.000 posições com 100.000 dados:
+
+**Tempo de Inserção (ms)**:
+- **HashRehashing**: 10,22ms
+- **HashEncadeamento**: 14,81ms
+- **HashDuplo**: 10,58ms
+
+**Tempo de Busca (ms)**:
+- **HashRehashing**: 2,26ms
+- **HashEncadeamento**: 1,91ms
+- **HashDuplo**: 2,87ms
+
+**Colisões**:
+- **HashRehashing**: 464 colisões
+- **HashEncadeamento**: 921 colisões
+- **HashDuplo**: 464 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 1.191 posições
+- **HashEncadeamento**: 1.191 posições
+- **HashDuplo**: 1.191 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 100,48 posições
+- **HashEncadeamento**: 100,49 posições
+- **HashDuplo**: 100,02 posições
+
+### Tabela 10.000.000 posições com 1.000.000 dados:
+
+**Tempo de Inserção (ms)**:
+- **HashRehashing**: 162,40ms
+- **HashEncadeamento**: 161,53ms
+- **HashDuplo**: 205,18ms
+
+**Tempo de Busca (ms)**:
+- **HashRehashing**: 33,93ms
+- **HashEncadeamento**: 28,16ms
+- **HashDuplo**: 56,63ms
+
+**Colisões**:
+- **HashRehashing**: 54.828 colisões
+- **HashEncadeamento**: 99.328 colisões
+- **HashDuplo**: 53.403 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 139 posições
+- **HashEncadeamento**: 139 posições
+- **HashDuplo**: 139 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 10,46 posições
+- **HashEncadeamento**: 10,52 posições
+- **HashDuplo**: 10,01 posições
+
+### Tabela 10.000.000 posições com 10.000.000 dados:
+
+**Tempo de Inserção (ms)**:
+- **HashRehashing**: 2.439,35ms
+- **HashEncadeamento**: 2.165,39ms
+- **HashDuplo**: 2.839,34ms
+
+**Tempo de Busca (ms)**:
+- **HashRehashing**: 1.933,63ms
+- **HashEncadeamento**: 659,90ms
+- **HashDuplo**: 2.605,37ms
+
+**Colisões**:
+- **HashRehashing**: 16.091.601 colisões
+- **HashEncadeamento**: 9.949.762 colisões
+- **HashDuplo**: 15.007.236 colisões
+
+**Maior Gap**:
+- **HashRehashing**: 11 posições
+- **HashEncadeamento**: 15 posições
+- **HashDuplo**: 7 posições
+
+**Menor Gap**:
+- **HashRehashing**: 1 posição
+- **HashEncadeamento**: 1 posição
+- **HashDuplo**: 1 posição
+
+**Média Gap**:
+- **HashRehashing**: 1,20 posições
+- **HashEncadeamento**: 1,58 posições
+- **HashDuplo**: 1,11 posições
+
+## Análise de Performance Comparativa Tabela 10.000.000
+
+### Desempenho por Cenário de Carga
+
+No cenário de baixa densidade (100.000 dados em 10 milhões de posições), observamos uma distribuição interessante de performance. O Hash por Encadeamento demonstra a melhor eficiência na busca com 1,91ms, enquanto HashRehashing e HashDuplo apresentam performance muito similar na inserção (≈10,4ms). O HashDuplo mostra ligeira desvantagem na busca com 2,87ms.
+
+No cenário de média densidade (1 milhão de dados), as três implementações apresentam performance bastante equilibrada na inserção, com HashEncadeamento (161,53ms) e HashRehashing (162,40ms) virtualmente empatados, e HashDuplo ligeiramente atrás (205,18ms). Na busca, o HashEncadeamento mantém liderança com 28,16ms, seguido por HashRehashing (33,93ms) e HashDuplo (56,63ms).
+
+No cenário de alta densidade (tabela completamente preenchida com 10 milhões de dados), o HashEncadeamento emerge como claro vencedor, alcançando o melhor desempenho tanto na inserção (2.165,39ms) quanto na busca (659,90ms). O HashRehashing apresenta performance intermediária, enquanto o HashDuplo demonstra os piores resultados neste cenário específico.
+
+### Análise de Escalabilidade e Comportamento
+
+A tabela de 10 milhões de posições revela padrões de escalabilidade distintos dos observados nas tabelas menores. Diferente do comportamento anterior, onde o HashDuplo se destacava sob overload, nesta configuração maior o HashEncadeamento demonstra excelente escalabilidade, mantendo performance superior mesmo quando a tabela está completamente preenchida.
+
+O HashRehashing mostra comportamento consistente, com degradação gradual de performance conforme a densidade aumenta. Seu tempo de inserção cresce de forma aproximadamente linear com o aumento da carga.
+
+O HashDuplo, que anteriormente se mostrava como a solução mais escalável, nesta configuração maior apresenta a pior performance no cenário de alta densidade, sugerindo que seu mecanismo de hash duplo pode sofrer com clusters de colisões em tabelas muito grandes quando completamente preenchidas.
+
+### Análise de Distribuição e Eficiência
+
+A análise de distribuição espacial na tabela gigante revela padrões fascinantes. Nos cenários de baixa e média densidade, os gaps médios são extremamente elevados (100,48 e 10,46 posições respectivamente para HashRehashing), refletindo a enorme dispersão em uma tabela esparsamente povoada.
+
+Conforme a tabela se aproxima da capacidade total, os gaps convergem para valores próximos de 1, indicando distribuição quase ideal. O HashDuplo mantém sua característica de melhor distribuição com gap médio de 1,11 posições, seguido pelo HashRehashing (1,20) e HashEncadeamento (1,58).
+
+O número de colisões segue padrão consistente: HashEncadeamento apresenta significativamente menos colisões (9,9 milhões) no cenário de alta densidade comparado aos outros métodos (16,1 e 15,0 milhões), o que explica sua performance superior neste cenário específico.
+
+### Conclusões Específicas para Tabela 10.000.000
+
+A tabela de 10 milhões de posições apresenta dinâmica fundamentalmente diferente das tabelas menores. O enorme espaço disponível permite que o HashEncadeamento brilhe, especialmente em cenários de alta densidade onde sua eficiência no tratamento de colisões através de listas encadeadas se mostra superior.
+
+A performance relativa dos métodos inverte-se em comparação com tabelas menores: enquanto em tabelas pequenas sob overload o HashDuplo era superior, na tabela gigante completamente preenchida o HashEncadeamento domina claramente.
+
+Esta análise demonstra que o tamanho absoluto da tabela hash é um fator crítico na escolha do método ideal. Para aplicações que requerem tabelas muito grandes com alta taxa de ocupação, o Hash por Encadeamento pode ser a escolha mais eficiente, enquanto para tabelas menores ou com flutuações significativas de carga, o Hash Duplo mantém vantagens em termos de consistência.
+
+O HashRehashing posiciona-se como uma solução balanceada, oferecendo performance competitiva dentre todos os cenários sem se destacar em nenhum específico, representando uma escolha segura para aplicações com requisitos variáveis.
 
 ### Análise Comparativa Geral
 
@@ -207,6 +523,8 @@ Resultados dramáticos emergem neste cenário. O HashDuplo sofreu uma **degrada�
 ![Comparativo Tempo de Busca](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/comparativo_tempoBusca.png)
 ![Comparativo Colisões](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/comparativo_colisoes.png)
 ![Comparativo Maior Gap](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/comparativo_maiorGap.png)
+![Comparativo Menor Gap](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/comparativo_menorGap.png)
+![Comparativo Media Gap](https://raw.githubusercontent.com/Ricardo-LK/PBL-Hash/refs/heads/main/plots/plots/comparativo_mediaGap.png)
 
 ## Análise de Desempenho Detalhada Baseada em Dados Reais
 
