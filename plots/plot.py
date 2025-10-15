@@ -37,7 +37,9 @@ comparativo_data = {
     "colisoes": {},
     "tempoInsercao": {},
     "tempoBusca": {},
-    "maiorGap": {}
+    "maiorGap": {},
+    "menorGap": {},
+    "mediaGap": {}
 }
 
 # Métricas que devem usar escala log
@@ -178,7 +180,7 @@ def main():
         dirpath = os.path.join(BASE_DIR, dirname)
         print(f"\n📊 Processando tabela hash: {dirname}")
 
-        for metric in ["colisoes", "tempoInsercao", "tempoBusca", "maiorGap"]:
+        for metric in ["colisoes", "tempoInsercao", "tempoBusca", "maiorGap", "menorGap", "mediaGap"]:
             filepath = os.path.join(dirpath, f"{metric}.csv")
             if os.path.exists(filepath):
                 df = pd.read_csv(filepath)
